@@ -2,31 +2,35 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Gaydons Motor Spares - Engine Parts</title>
+  <title>Gaydons Motor Spares SA – Engine Parts</title>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdn.emailjs.com/dist/email.min.js"></script>
   <style>
     body {
       font-family: Arial, sans-serif;
-      background: #f5f5f5;
+      background: url('/Gaydons-Motor-Spares-SA/starter.jpg') no-repeat center center fixed;
+      background-size: cover;
+      color: white;
       padding: 30px;
       text-align: center;
     }
 
     h1 {
-      color: #333;
+      color: #00ffe6;
+      text-shadow: 0 0 10px #000;
     }
 
     .product {
-      background: white;
+      background: rgba(0, 0, 0, 0.7);
       padding: 20px;
       margin: 15px auto;
       border-radius: 8px;
       max-width: 400px;
-      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      box-shadow: 0 0 10px #00ffe6;
     }
 
     .product h2 {
-      color: #444;
+      color: #fff;
     }
 
     button {
@@ -43,6 +47,12 @@
     #form-section {
       display: none;
       margin-top: 20px;
+      background: rgba(0, 0, 0, 0.75);
+      padding: 20px;
+      border-radius: 8px;
+      max-width: 450px;
+      margin-left: auto;
+      margin-right: auto;
     }
 
     input, textarea {
@@ -50,6 +60,8 @@
       margin: 5px 0;
       width: 300px;
       max-width: 90%;
+      border: none;
+      border-radius: 4px;
     }
 
     #generate-btn {
@@ -59,7 +71,7 @@
 </head>
 <body>
 
-  <h1>Engine Parts - Gaydons Motor Spares SA</h1>
+  <h1>Engine Parts – Gaydons Motor Spares SA</h1>
   <img src="/Gaydons-Motor-Spares-SA/spares.jpg" alt="Logo" width="120" />
 
   <div class="product">
@@ -71,11 +83,14 @@
   <div id="form-section">
     <h3>Enter Shipping Details</h3>
     <input id="clientName" type="text" placeholder="Full Name" required /><br />
+    <input id="clientEmail" type="email" placeholder="Email Address" required /><br />
     <textarea id="clientAddress" placeholder="Shipping Address" rows="3" required></textarea><br />
     <button id="generate-btn" onclick="generatePDF()">Download Invoice</button>
   </div>
 
   <script>
+    emailjs.init("YOUR_PUBLIC_EMAILJS_KEY"); // 🔁 Replace when ready
+
     function simulatePayment() {
       alert("✅ Payment successful (simulated)");
       document.getElementById("form-section").style.display = "block";
@@ -87,9 +102,10 @@
 
       const name = document.getElementById("clientName").value.trim();
       const address = document.getElementById("clientAddress").value.trim();
+      const email = document.getElementById("clientEmail").value.trim();
 
-      if (!name || !address) {
-        alert("Please enter full name and address.");
+      if (!name || !address || !email) {
+        alert("Please enter all required fields.");
         return;
       }
 
@@ -118,6 +134,29 @@
       doc.text(doc.splitTextToSize(waiver, 170), 20, 118);
 
       doc.save(`${name.replace(/\s+/g, '_')}_Invoice.pdf`);
+
+      // Optional: Send invoice via email using EmailJS
+      // You must configure EmailJS service, template, and public key
+
+      /*
+      const pdfBlob = doc.output("blob");
+
+      const reader = new FileReader();
+      reader.onloadend = function () {
+        const base64data = reader.result.split(',')[1];
+
+        emailjs.send("YOUR_SERVICE_ID", "YOUR_TEMPLATE_ID", {
+          client_name: name,
+          client_email: email,
+          invoice_pdf: base64data
+        }).then(() => {
+          alert("📧 Invoice emailed to client!");
+        }).catch((err) => {
+          console.error("Email failed:", err);
+        });
+      };
+      reader.readAsDataURL(pdfBlob);
+      */
     }
   </script>
 </body>
