@@ -4,7 +4,6 @@
   <meta charset="UTF-8" />
   <title>Gaydons Motor Spares SA – Engine Parts</title>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-  <script src="https://cdn.emailjs.com/dist/email.min.js"></script>
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -29,10 +28,6 @@
       box-shadow: 0 0 10px #00ffe6;
     }
 
-    .product h2 {
-      color: #fff;
-    }
-
     button {
       background: #00b894;
       color: white;
@@ -50,7 +45,7 @@
       background: rgba(0, 0, 0, 0.75);
       padding: 20px;
       border-radius: 8px;
-      max-width: 450px;
+      max-width: 500px;
       margin-left: auto;
       margin-right: auto;
     }
@@ -66,6 +61,18 @@
 
     #generate-btn {
       background: #0984e3;
+    }
+
+    #tracking-details {
+      margin-top: 20px;
+      background: rgba(255,255,255,0.1);
+      padding: 15px;
+      border-radius: 6px;
+      display: none;
+    }
+
+    a {
+      color: #00ffe6;
     }
   </style>
 </head>
@@ -85,12 +92,17 @@
     <input id="clientName" type="text" placeholder="Full Name" required /><br />
     <input id="clientEmail" type="email" placeholder="Email Address" required /><br />
     <textarea id="clientAddress" placeholder="Shipping Address" rows="3" required></textarea><br />
-    <button id="generate-btn" onclick="generatePDF()">Download Invoice</button>
+    <button id="generate-btn" onclick="generatePDF()">Download Invoice & Label</button>
+  </div>
+
+  <div id="tracking-details">
+    <h3>📦 Courier Guy Shipment Created</h3>
+    <p><strong>Tracking Number:</strong> <span id="mockTracking"></span></p>
+    <p><a href="/Gaydons-Motor-Spares-SA/mock-label.pdf" target="_blank">Download Shipping Label</a></p>
+    <p>Estimated Delivery: 2–3 working days</p>
   </div>
 
   <script>
-    emailjs.init("YOUR_PUBLIC_EMAILJS_KEY"); // 🔁 Replace when ready
-
     function simulatePayment() {
       alert("✅ Payment successful (simulated)");
       document.getElementById("form-section").style.display = "block";
@@ -110,6 +122,7 @@
       }
 
       const txnID = "TXN-TEST" + Math.floor(1000 + Math.random() * 9000);
+      const trackingNum = "CGY-" + Math.floor(100000 + Math.random() * 900000);
       const date = new Date().toLocaleDateString();
       const product = "Toyota Corolla Starter (2005–2010)";
       const price = "ZAR 950.00";
@@ -129,34 +142,18 @@
       doc.text(product, 20, 88);
       doc.text(`Amount: ${price}`, 20, 96);
 
-      doc.text("Waiver:", 20, 110);
+      doc.text("Courier:", 20, 108);
+      doc.text(`Courier Guy - Tracking # ${trackingNum}`, 20, 116);
+
+      doc.text("Waiver:", 20, 130);
       doc.setFontSize(10);
-      doc.text(doc.splitTextToSize(waiver, 170), 20, 118);
+      doc.text(doc.splitTextToSize(waiver, 170), 20, 138);
 
       doc.save(`${name.replace(/\s+/g, '_')}_Invoice.pdf`);
 
-      // Optional: Send invoice via email using EmailJS
-      // You must configure EmailJS service, template, and public key
-
-      /*
-      const pdfBlob = doc.output("blob");
-
-      const reader = new FileReader();
-      reader.onloadend = function () {
-        const base64data = reader.result.split(',')[1];
-
-        emailjs.send("YOUR_SERVICE_ID", "YOUR_TEMPLATE_ID", {
-          client_name: name,
-          client_email: email,
-          invoice_pdf: base64data
-        }).then(() => {
-          alert("📧 Invoice emailed to client!");
-        }).catch((err) => {
-          console.error("Email failed:", err);
-        });
-      };
-      reader.readAsDataURL(pdfBlob);
-      */
+      // Show mock tracking section
+      document.getElementById("tracking-details").style.display = "block";
+      document.getElementById("mockTracking").innerText = trackingNum;
     }
   </script>
 </body>
