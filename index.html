@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Gaydons Motor Spares - Engine Parts</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f5f5f5;
+      padding: 30px;
+      text-align: center;
+    }
+
+    h1 {
+      color: #333;
+    }
+
+    .product {
+      background: white;
+      padding: 20px;
+      margin: 15px auto;
+      border-radius: 8px;
+      max-width: 400px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+
+    .product h2 {
+      color: #444;
+    }
+
+    button {
+      background: #00b894;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      margin-top: 10px;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 16px;
+    }
+
+    #form-section {
+      display: none;
+      margin-top: 20px;
+    }
+
+    input, textarea {
+      padding: 10px;
+      margin: 5px 0;
+      width: 300px;
+      max-width: 90%;
+    }
+
+    #generate-btn {
+      background: #0984e3;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Engine Parts - Gaydons Motor Spares SA</h1>
+  <img src="/Gaydons/spares.jpg" alt="Logo" width="120" />
+
+  <div class="product">
+    <h2>Toyota Corolla Starter (2005–2010)</h2>
+    <p>Price: <strong>ZAR 950.00</strong></p>
+    <button onclick="simulatePayment()">Buy Now</button>
+  </div>
+
+  <div id="form-section">
+    <h3>Enter Shipping Details</h3>
+    <input id="clientName" type="text" placeholder="Full Name" required /><br />
+    <textarea id="clientAddress" placeholder="Shipping Address" rows="3" required></textarea><br />
+    <button id="generate-btn" onclick="generatePDF()">Download Invoice</button>
+  </div>
+
+  <script>
+    function simulatePayment() {
+      alert("✅ Payment successful (simulated)");
+      document.getElementById("form-section").style.display = "block";
+    }
+
+    async function generatePDF() {
+      const { jsPDF } = window.jspdf;
+      const doc = new jsPDF();
+
+      const name = document.getElementById("clientName").value.trim();
+      const address = document.getElementById("clientAddress").value.trim();
+
+      if (!name || !address) {
+        alert("Please enter full name and address.");
+        return;
+      }
+
+      const txnID = "TXN-TEST" + Math.floor(1000 + Math.random() * 9000);
+      const date = new Date().toLocaleDateString();
+      const product = "Toyota Corolla Starter (2005–2010)";
+      const price = "ZAR 950.00";
+      const waiver = "All parts are sold 'as is' and carry no warranty unless otherwise stated in writing. The buyer accepts all responsibility for fitment, use, and safety upon purchase.";
+
+      doc.setFontSize(16);
+      doc.text("Gaydons Motor Spares SA", 20, 20);
+      doc.setFontSize(12);
+      doc.text(`Invoice #: ${txnID}`, 20, 30);
+      doc.text(`Date: ${date}`, 20, 38);
+
+      doc.text("Billed To:", 20, 50);
+      doc.text(name, 20, 58);
+      doc.text(address, 20, 66);
+
+      doc.text("Item:", 20, 80);
+      doc.text(product, 20, 88);
+      doc.text(`Amount: ${price}`, 20, 96);
+
+      doc.text("Waiver:", 20, 110);
+      doc.setFontSize(10);
+      doc.text(doc.splitTextToSize(waiver, 170), 20, 118);
+
+      doc.save(`${name.replace(/\s+/g, '_')}_Invoice.pdf`);
+    }
+  </script>
+</body>
+</html>
